@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的 AI 工具清单 · 赵想哲</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --text: #e8e4dc;
+    --muted: #888;
+    --accent: #c8f060;
+    --accent2: #f0c860;
+    --accent3: #60c8f0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 72px 0 48px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 64px;
+  }
+
+  .header-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards;
+  }
+
+  h1 {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+
+  .header-meta {
+    font-size: 14px;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.2s forwards;
+  }
+
+  .header-meta span {
+    margin-right: 24px;
+  }
+
+  /* INTRO */
+  .intro {
+    margin-bottom: 64px;
+    font-size: 15px;
+    color: #b0ac a4;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.3s forwards;
+    border-left: 2px solid var(--accent);
+    padding-left: 20px;
+    color: #aaa;
+  }
+
+  /* TOOL CARDS */
+  .tool {
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fadeUp 0.7s ease forwards;
+  }
+
+  .tool:nth-child(1) { animation-delay: 0.35s; }
+  .tool:nth-child(2) { animation-delay: 0.45s; }
+  .tool:nth-child(3) { animation-delay: 0.55s; }
+  .tool:nth-child(4) { animation-delay: 0.65s; }
+  .tool:nth-child(5) { animation-delay: 0.75s; }
+  .tool:nth-child(6) { animation-delay: 0.85s; }
+
+  .tool-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .tool-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .tool-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 2px;
+    font-weight: 400;
+  }
+
+  .tag-llm { background: rgba(200,240,96,0.12); color: var(--accent); border: 1px solid rgba(200,240,96,0.25); }
+  .tag-coding { background: rgba(96,200,240,0.12); color: var(--accent3); border: 1px solid rgba(96,200,240,0.25); }
+  .tag-image { background: rgba(240,200,96,0.12); color: var(--accent2); border: 1px solid rgba(240,200,96,0.25); }
+  .tag-ecosystem { background: rgba(200,96,240,0.12); color: #c860f0; border: 1px solid rgba(200,96,240,0.25); }
+
+  .tool-body {
+    font-size: 14.5px;
+    line-height: 1.85;
+    color: #c8c4bc;
+  }
+
+  .tool-body p {
+    margin-bottom: 12px;
+  }
+
+  .tool-body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .highlight {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .tool-verdict {
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 8px;
+  }
+
+  .verdict-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    padding-top: 1px;
+  }
+
+  .tool-divider {
+    height: 1px;
+    background: var(--border);
+    margin-top: 56px;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 48px 0 64px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .tool-name { font-size: 17px; }
+    .tool-body { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="header-label">Portfolio · AI Tools</div>
+    <h1>我用过的 <em>AI 工具</em><br>以及我怎么看它们</h1>
+    <div class="header-meta">
+      <span>赵想哲</span>
+      <span>NLP 硕士在读 @ UCLouvain</span>
+      <span>2026.03</span>
+    </div>
+  </header>
+
+  <div class="intro">
+    我不只是这些工具的用户——我会把它们组合起来解决实际问题。下面是我用下来真实的感受，不是参数对比，而是<strong style="color:var(--text)">用的时候到底是什么体验</strong>。
+  </div>
+
+  <div class="tools-list">
+
+    <!-- Claude -->
+    <div class="tool">
+      <div class="tool-header">
+        <span class="tool-name">Claude</span>
+        <span class="tool-tag tag-llm">LLM</span>
+        <span class="tool-tag tag-coding">Coding</span>
+      </div>
+      <div class="tool-body">
+        <p>我目前<span class="highlight">主力使用的模型</span>。写代码的能力很强，多任务处理也很稳——能在一次对话里同时改代码、写文档、分析问题，不容易跑偏。在 Claude Code 里的体验和 Cursor 差不多，是真正能用来干活的 AI coding 工具。</p>
+        <p>让我印象最深的是它的<span class="highlight">意图理解</span>。问同一个问题，ChatGPT 和 Gemini 会先总结你说的话，然后分点展开，最后再收尾——格式看起来很"专业"，但实际上是在用结构掩盖对意图的判断。Claude 不一样：如果你要的是一句话答案，它就给一句话；如果你要的是完整分析，它才展开。在我复习课程内容时，有问题直接给出精确解答，不绕弯子。</p>
+        <p>这个差异背后是产品逻辑的不同：ChatGPT/Gemini 的输出格式服务于<span class="highlight">"看起来有条理"</span>，Claude 的输出格式服务于<span class="highlight">用户真正想要的东西</span>。前者迎合预期，后者理解意图。</p>
+      </div>
+      <div class="tool-verdict">
+        <span class="verdict-label">我的判断</span>
+        <span>意图驱动输出，而不是模板驱动输出。这是它和其他模型最本质的区别。</span>
+      </div>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <!-- Gemini -->
+    <div class="tool">
+      <div class="tool-header">
+        <span class="tool-name">Gemini</span>
+        <span class="tool-tag tag-llm">LLM</span>
+        <span class="tool-tag tag-ecosystem">生态</span>
+      </div>
+      <div class="tool-body">
+        <p>会员可以<span class="highlight">无限用 token</span>，这是它最大的优势。任务类型也很多样。但它有个让我困扰的习惯——<span class="highlight">简单的问题说很长</span>，经常绕一大圈才到重点。我判断这主要是 prompt 风格的问题，调整一下会好很多，但默认体验不够干净。</p>
+        <p>真正让我觉得 Gemini 不可替代的是<span class="highlight"> Google 生态的整合</span>：Google Drive、语音转录、YouTube 摘要、搜索……这些工具本来就在同一个生态里，做项目时不需要来回切换，效率很高。如果你重度依赖 Google 全家桶，Gemini 值得认真用。</p>
+      </div>
+      <div class="tool-verdict">
+        <span class="verdict-label">我的判断</span>
+        <span>靠生态取胜，模型本身中规中矩。token 无限是刚需场景的救星。</span>
+      </div>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <!-- 豆包 -->
+    <div class="tool">
+      <div class="tool-header">
+        <span class="tool-name">豆包</span>
+        <span class="tool-tag tag-llm">LLM</span>
+      </div>
+      <div class="tool-body">
+        <p>我用得相对少，整体能力和 Claude、Gemini 这些主流产品还有差距。但它在<span class="highlight">中国互联网的传播力</span>很强——抖音上各种豆包对话截图、角色扮演视频流量很高，以搞笑和娱乐内容为主，出圈靠的是社交属性而不是技术深度。</p>
+        <p>这个观察本身挺有意思：<span class="highlight">产品能力和传播力可以完全脱钩</span>。豆包是个很好的案例，说明在中国市场，内容玩法和平台分发比模型本身更决定用户规模。</p>
+      </div>
+      <div class="tool-verdict">
+        <span class="verdict-label">我的判断</span>
+        <span>适合娱乐向场景。研究中国 AI 产品的市场策略，豆包是个好样本。</span>
+      </div>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <!-- Cursor -->
+    <div class="tool">
+      <div class="tool-header">
+        <span class="tool-name">Cursor</span>
+        <span class="tool-tag tag-coding">Coding</span>
+      </div>
+      <div class="tool-body">
+        <p>我把 Cursor 理解成一个<span class="highlight">有极好交互层的 AI 接入器</span>——它本质上是用 API token 连接不同模型来干活，模型本身可以随时换。它的价值不在于模型，在于<span class="highlight">交互设计</span>。</p>
+        <p>最让我印象深刻的是做游戏迭代的时候：修改代码之后可以<span class="highlight">直接在 Cursor 里看到游戏运行效果</span>，边看边改，反馈循环极短。这种"看见 → 改 → 立刻再看见"的体验，是纯文字对话做不到的。如果说 Claude 是我的思考伙伴，Cursor 就是我的施工现场。</p>
+      </div>
+      <div class="tool-verdict">
+        <span class="verdict-label">我的判断</span>
+        <span>交互是核心竞争力。写代码、做项目迭代，体验目前最好。</span>
+      </div>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <!-- 即梦 -->
+    <div class="tool">
+      <div class="tool-header">
+        <span class="tool-name">即梦</span>
+        <span class="tool-tag tag-image">图像生成</span>
+      </div>
+      <div class="tool-body">
+        <p>用来生成项目所需的图像素材。效果还可以，但<span class="highlight">严重依赖 prompt 质量</span>——描述得模糊，出来的东西就很随机；描述得精确，才能稳定出想要的结果。用它的过程让我对"文生图 prompt 工程"有了具体的认识：不只是说"画一张什么"，而是要控制风格、构图、光线、细节层次。</p>
+        <p>不过即梦有个我觉得做得聪明的地方：同一个 prompt 每次生成四张，结果都不一样，不满意可以直接重新生成。这本质上是在用<span class="highlight">产品设计消化模型的随机性</span>——文生图模型天然不稳定，"每次结果不同"是技术局限，但包装成"提供多种可能性"就成了功能。把约束转化成特性，这个决策值得学习。</p>
+      </div>
+      <div class="tool-verdict">
+        <span class="verdict-label">我的判断</span>
+        <span>用产品设计消化了模型的不确定性。会用 = 会写 prompt，更会理解生成结果。</span>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 赵想哲 · 持续更新中
+  </footer>
+
+</div>
+</body>
+</html>
