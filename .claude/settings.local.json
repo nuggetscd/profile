@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s https://raw.githubusercontent.com/nuggetscd/douyin-translator/main/PRD.md)",
+      "Bash(python3:*)"
+    ]
+  }
+}
